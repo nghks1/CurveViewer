@@ -8,19 +8,25 @@ import os
 import time
 import utility as ul
 
+"""
+Read in Data and preprocess 
+"""
+
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 df = pd.read_csv(os.path.join(os.path.dirname(__file__), 'Data/UScurve.csv'),parse_dates=['Date'])
 df=df.dropna()
 df['Date']= df['Date'].astype(np.int64)
 col_names = df.drop('Date',axis=1).columns.values
-col_names= np.insert(col_names,0," ",axis=0)
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
+"""
+This Section defines the layout of the app and how it looks 
+"""
 
 app.layout = html.Div([
     dcc.Tabs([
-        dcc.Tab(label = 'outright', children = [
+        dcc.Tab(label = 'Outright', children = [
 
             html.Div([
                 dcc.Graph(
@@ -41,22 +47,22 @@ app.layout = html.Div([
             html.Div([
                 dcc.Dropdown(
                     id='crossfilter-yaxis-column',
-                    options=[{'label': i, 'value': i} for i in df.drop('Date', axis=1).columns],
+                    options=[{'label': i, 'value': i} for i in col_names],
                     value='1y'
                 ),
             ], ),
 
             html.Div([
-                dcc.Graph(id='x-time-series'),
+                dcc.Graph(id='time-series'),
             ], )
 
         ]),
 
-        dcc.Tab(label = 'curve',children = [
+        dcc.Tab(label = 'Curve',children = [
             html.H1(children='US Curve Spread (Bps)'),
             dash_table.DataTable(
                 id='table',
-                columns=[{"name": i, "id": i} for i in col_names],
+                columns=[{"name": i, "id": i} for i in np.insert(col_names,0," ",axis=0)],
                 data=ul.generate_table(df)
             ),
             html.Div([
@@ -79,7 +85,7 @@ app.layout = html.Div([
             ], style={'width': '49%', 'float': 'right', 'display': 'inline-block'}),
             html.Div([
                 dcc.Graph(
-                    id='curve-graph',
+                    id='spread-graph',
 
                 )
             ], style={'display': 'inline-block'}),
@@ -92,6 +98,10 @@ app.layout = html.Div([
 ])
 
 
+"""
+This Section defines the callback functions and how the various components of the app interact 
+"""
+
 
 @app.callback(
     dash.dependencies.Output('curve-graph', 'figure'),
@@ -101,7 +111,7 @@ def update_graph(date_value):
     dff = df[df['Date'] == date_value]
     return {
         'data': [dict(
-            x= ["1y", "2y","3y","4y","5y","6y","7y","8y","9y","10y","12y","15y","20y","25y","30y"],
+            x= [i for i in col_names],
             y=dff.drop('Date',axis=1).values[0],
             mode='lines',
 
@@ -126,7 +136,7 @@ def update_graph(date_value):
     }
 
 @app.callback(
-    dash.dependencies.Output('curve-graph', 'figure'),
+    dash.dependencies.Output('spread-graph', 'figure'),
     [dash.dependencies.Input('1st-tenor', 'value'),
      dash.dependencies.Input('2nd-tenor', 'value')])
 
@@ -160,9 +170,9 @@ def update_curve_graph(front,back):
     }
 
 @app.callback(
-    dash.dependencies.Output('x-time-series', 'figure'),
+    dash.dependencies.Output('time-series', 'figure'),
     [dash.dependencies.Input('crossfilter-yaxis-column', 'value')])
-def update_y_timeseries(tenor):
+def update_timeseries(tenor):
     return {
         'data': [dict(
             x=pd.to_datetime(df['Date'],unit='ns'),
