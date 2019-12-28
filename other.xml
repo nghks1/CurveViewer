@@ -1,0 +1,25 @@
+<application>
+  <component name="PyTestFrameworkService">
+    <option name="SDK_TO_PYTEST">
+      <map>
+        <entry key="$USER_HOME$/PycharmProjects/bbg/venv/bin/python" value="true" />
+        <entry key="$USER_HOME$/anaconda2/envs/bbg/bin/python" value="true" />
+        <entry key="$USER_HOME$/anaconda3/envs/PyTrendFollow/bin/python" value="true" />
+      </map>
+    </option>
+    <option name="SDK_TO_NOSETEST">
+      <map>
+        <entry key="$USER_HOME$/PycharmProjects/bbg/venv/bin/python" value="false" />
+        <entry key="$USER_HOME$/anaconda2/envs/bbg/bin/python" value="false" />
+        <entry key="$USER_HOME$/anaconda3/envs/PyTrendFollow/bin/python" value="false" />
+      </map>
+    </option>
+    <option name="SDK_TO_TRIALTEST">
+      <map>
+        <entry key="$USER_HOME$/PycharmProjects/bbg/venv/bin/python" value="false" />
+        <entry key="$USER_HOME$/anaconda2/envs/bbg/bin/python" value="false" />
+        <entry key="$USER_HOME$/anaconda3/envs/PyTrendFollow/bin/python" value="false" />
+      </map>
+    </option>
+  </component>
+</application>
